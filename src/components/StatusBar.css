@@ -1,0 +1,38 @@
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 28px;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(13, 18, 8, 0.8);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.statusbar-left,
+.statusbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+}
+
+.status-dot.disconnected {
+  background: var(--text-dim);
+}
+
+.status-dot.warning {
+  background: var(--amber);
+}

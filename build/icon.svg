@@ -1,0 +1,35 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a2614"/>
+      <stop offset="100%" stop-color="#0d1208"/>
+    </linearGradient>
+    <linearGradient id="trunk" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#8fb87a"/>
+      <stop offset="100%" stop-color="#5a7a4a"/>
+    </linearGradient>
+    <linearGradient id="canopy1" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#a8d494"/>
+      <stop offset="100%" stop-color="#6b8f5e"/>
+    </linearGradient>
+    <linearGradient id="canopy2" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#8fb87a"/>
+      <stop offset="100%" stop-color="#4a6741"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <!-- trunk -->
+  <rect x="488" y="520" width="48" height="280" rx="24" fill="url(#trunk)"/>
+  <!-- left branch -->
+  <line x1="512" y1="640" x2="380" y2="740" stroke="#5a7a4a" stroke-width="20" stroke-linecap="round"/>
+  <!-- right branch -->
+  <line x1="512" y1="580" x2="660" y2="700" stroke="#5a7a4a" stroke-width="20" stroke-linecap="round"/>
+  <!-- canopy center -->
+  <circle cx="512" cy="340" r="160" fill="url(#canopy1)" opacity="0.9"/>
+  <!-- canopy left -->
+  <circle cx="380" cy="440" r="120" fill="url(#canopy2)" opacity="0.85"/>
+  <!-- canopy right -->
+  <circle cx="644" cy="440" r="120" fill="url(#canopy2)" opacity="0.85"/>
+  <!-- highlight -->
+  <circle cx="480" cy="300" r="60" fill="rgba(200,240,180,0.15)"/>
+</svg>

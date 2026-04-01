@@ -1,0 +1,108 @@
+:root {
+  /* Forest palette */
+  --bg-deep: #0d1208;
+  --bg-primary: #141a0f;
+  --bg-surface: #1c2416;
+  --bg-surface-hover: #243020;
+  --bg-elevated: #2a3824;
+  --bg-card: rgba(30, 42, 24, 0.7);
+  --bg-card-hover: rgba(38, 54, 30, 0.85);
+
+  /* Greens */
+  --green-muted: #4a6741;
+  --green-mid: #6b8f5e;
+  --green-bright: #8fb87a;
+  --green-vivid: #a8d494;
+  --green-glow: #c2f0a8;
+
+  /* Amber accents */
+  --amber: #d4a252;
+  --amber-bright: #e8b85c;
+  --amber-glow: #f5d08a;
+
+  /* Text */
+  --text-primary: #e8efe4;
+  --text-secondary: #9aab90;
+  --text-muted: #6b7d62;
+  --text-dim: #4a5844;
+
+  /* Status */
+  --status-active: #8fb87a;
+  --status-modified: #d4a252;
+  --status-stale: #7a6b5e;
+
+  /* Borders */
+  --border-subtle: rgba(107, 143, 94, 0.15);
+  --border-mid: rgba(107, 143, 94, 0.25);
+  --border-bright: rgba(143, 184, 122, 0.4);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px rgba(143, 184, 122, 0.08);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-mid);
+}
+
+/* ===== Animations ===== */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

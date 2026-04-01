@@ -1,0 +1,336 @@
+/* ===== Grid Card ===== */
+.worktree-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.worktree-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green-mid), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.worktree-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-mid);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+.worktree-card:hover::before {
+  opacity: 1;
+}
+
+.worktree-card.main-branch {
+  border-color: rgba(143, 184, 122, 0.2);
+}
+
+/* Card header */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.branch-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.branch-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  animation: pulse-ring 2s ease-out infinite;
+  color: inherit;
+}
+
+.branch-name {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.worktree-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.card-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+.card-action-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.more-wrapper {
+  position: relative;
+}
+
+.more-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  z-index: 50;
+  animation: dropdown-in 0.15s ease;
+  min-width: 160px;
+}
+
+.more-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: #d49a9a;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.more-dropdown button:hover {
+  background: rgba(180, 100, 100, 0.15);
+}
+
+/* Card body */
+.card-path {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', 'SF Mono', monospace;
+  margin-bottom: 14px;
+  padding: 5px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-details {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-item svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+}
+
+.commit-hash {
+  font-family: 'DM Mono', 'SF Mono', monospace;
+  color: var(--amber);
+  font-size: 11px;
+}
+
+/* Card footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.card-tags {
+  display: flex;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.tag-default {
+  background: rgba(143, 184, 122, 0.1);
+  color: var(--green-bright);
+  border: 1px solid rgba(143, 184, 122, 0.15);
+}
+
+.tag-feature {
+  background: rgba(212, 162, 82, 0.1);
+  color: var(--amber-bright);
+  border: 1px solid rgba(212, 162, 82, 0.15);
+}
+
+.tag-fix {
+  background: rgba(180, 100, 100, 0.1);
+  color: #d49a9a;
+  border: 1px solid rgba(180, 100, 100, 0.15);
+}
+
+.launch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-muted));
+  border: 1px solid rgba(143, 184, 122, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateX(4px);
+}
+
+.worktree-card:hover .launch-btn {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.launch-btn:hover {
+  background: linear-gradient(135deg, var(--green-bright), var(--green-mid));
+  box-shadow: 0 0 16px rgba(143, 184, 122, 0.2);
+}
+
+.launch-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.launch-btn.compact {
+  opacity: 1;
+  transform: none;
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
+/* ===== List Item ===== */
+.worktree-list-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  animation: fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.worktree-list-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-mid);
+}
+
+.worktree-list-item.main-branch {
+  border-color: rgba(143, 184, 122, 0.2);
+}
+
+.list-branch-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.list-branch-name {
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-path {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', 'SF Mono', monospace;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-commit {
+  font-size: 11px;
+}
+
+.list-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 70px;
+  text-align: right;
+}
