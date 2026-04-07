@@ -28,6 +28,22 @@ export const KNOWN_IDES: IdeOption[] = [
   { id: 'vim', name: 'Vim / Neovim', cmd: 'nvim', color: '#888', label: 'VI' },
 ]
 
+export interface RepoConfig {
+  copyFiles: string[]            // paths relative to repo root to copy into new worktree
+  postCreateCommands: string[]   // shell commands to run in new worktree after creation
+}
+
+export const DEFAULT_REPO_CONFIG: RepoConfig = {
+  copyFiles: [],
+  postCreateCommands: [],
+}
+
+export interface CreateWorktreeProgress {
+  step: 'git' | 'copy' | 'commands' | 'done'
+  message: string
+  error?: string
+}
+
 export interface GroveAPI {
   getWorktrees: (repoPath: string) => Promise<WorktreeInfo[]>
   openInIde: (ideCmd: string, worktreePath: string, appName?: string) => Promise<{ success: boolean; error?: string }>
@@ -41,6 +57,10 @@ export interface GroveAPI {
   checkIdeCommand: (cmd: string, appName?: string) => Promise<{ found: boolean; path?: string }>
   getSavedIdes: () => Promise<IdeOption[]>
   saveIdes: (ides: IdeOption[]) => Promise<void>
+  getRepoConfig: (repoPath: string) => Promise<RepoConfig>
+  saveRepoConfig: (repoPath: string, config: RepoConfig) => Promise<void>
+  pickFileFromRepo: (repoPath: string) => Promise<string | null>
+  listRepoFiles: (repoPath: string, pattern?: string) => Promise<string[]>
 }
 
 declare global {

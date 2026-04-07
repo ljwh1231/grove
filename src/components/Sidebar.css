@@ -189,13 +189,14 @@
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-lg);
   padding: 4px;
+  min-width: 180px;
   animation: dropdown-in 0.15s ease;
 }
 
 .context-menu button {
   display: block;
   width: 100%;
-  padding: 8px 16px;
+  padding: 8px 14px;
   background: none;
   border: none;
   color: #d49a9a;
@@ -206,6 +207,21 @@
   text-align: left;
 }
 
+.context-menu button.ctx-default {
+  color: var(--text-secondary);
+}
+
+.context-menu button.ctx-default:hover {
+  background: rgba(143, 184, 122, 0.1);
+  color: var(--green-bright);
+}
+
 .context-menu button:hover {
   background: rgba(180, 100, 100, 0.15);
+}
+
+.context-menu .ctx-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0;
 }

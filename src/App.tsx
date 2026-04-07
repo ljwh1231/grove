@@ -5,6 +5,7 @@ import TopBar from './components/TopBar'
 import WorktreeGrid from './components/WorktreeGrid'
 import StatusBar from './components/StatusBar'
 import NewWorktreeModal from './components/NewWorktreeModal'
+import RepoSettingsModal from './components/RepoSettingsModal'
 import './styles/App.css'
 
 const api = window.groveAPI
@@ -18,6 +19,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [showNewModal, setShowNewModal] = useState(false)
+  const [settingsRepo, setSettingsRepo] = useState<string | null>(null)
 
   // Load saved repos and IDEs on mount
   useEffect(() => {
@@ -139,6 +141,7 @@ function App() {
         onSelectRepo={setActiveRepo}
         onAddRepo={handleAddRepo}
         onRemoveRepo={handleRemoveRepo}
+        onOpenRepoSettings={setSettingsRepo}
       />
       <main className="main">
         <TopBar
@@ -177,6 +180,9 @@ function App() {
           onCreate={handleCreateWorktree}
           onLaunch={handleLaunch}
         />
+      )}
+      {settingsRepo && (
+        <RepoSettingsModal repoPath={settingsRepo} onClose={() => setSettingsRepo(null)} />
       )}
     </div>
   )

@@ -8,6 +8,7 @@ interface SidebarProps {
   onSelectRepo: (path: string) => void
   onAddRepo: () => void
   onRemoveRepo: (path: string) => void
+  onOpenRepoSettings: (path: string) => void
 }
 
 function getRepoEmoji(name: string): string {
@@ -25,7 +26,7 @@ function getRepoEmoji(name: string): string {
   return '🌿'
 }
 
-export default function Sidebar({ repos, activeRepo, worktreeCounts, onSelectRepo, onAddRepo, onRemoveRepo }: SidebarProps) {
+export default function Sidebar({ repos, activeRepo, worktreeCounts, onSelectRepo, onAddRepo, onRemoveRepo, onOpenRepoSettings }: SidebarProps) {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; repo: string } | null>(null)
 
   const handleContextMenu = (e: React.MouseEvent, repo: string) => {
@@ -99,6 +100,10 @@ export default function Sidebar({ repos, activeRepo, worktreeCounts, onSelectRep
           className="context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
+          <button className="ctx-default" onClick={() => { onOpenRepoSettings(contextMenu.repo); setContextMenu(null) }}>
+            Repository Settings...
+          </button>
+          <div className="ctx-divider" />
           <button onClick={() => { onRemoveRepo(contextMenu.repo); setContextMenu(null) }}>
             Remove Repository
           </button>

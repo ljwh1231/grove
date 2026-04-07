@@ -15,4 +15,8 @@ contextBridge.exposeInMainWorld('groveAPI', {
   checkIdeCommand: (cmd: string, appName?: string) => ipcRenderer.invoke('check-ide-command', cmd, appName),
   getSavedIdes: () => ipcRenderer.invoke('get-saved-ides'),
   saveIdes: (ides: any[]) => ipcRenderer.invoke('save-ides', ides),
+  getRepoConfig: (repoPath: string) => ipcRenderer.invoke('get-repo-config', repoPath),
+  saveRepoConfig: (repoPath: string, config: any) => ipcRenderer.invoke('save-repo-config', repoPath, config),
+  pickFileFromRepo: (repoPath: string) => ipcRenderer.invoke('pick-file-from-repo', repoPath),
+  listRepoFiles: (repoPath: string, pattern?: string) => ipcRenderer.invoke('list-repo-files', repoPath, pattern),
 })

@@ -225,27 +225,146 @@ ipcMain.handle('open-terminal', async (_event, worktreePath: string) => {
   }
 })
 
-ipcMain.handle('create-worktree', async (_event, repoPath: string, branchName: string, baseBranch?: string) => {
-  try {
-    const parentDir = path.dirname(repoPath)
-    const repoName = path.basename(repoPath)
-    const safeBranch = branchName.replace(/\//g, '-')
-    const worktreePath = path.join(parentDir, `${repoName}-${safeBranch}`)
+interface RepoConfig {
+  copyFiles: string[]
+  postCreateCommands: string[]
+}
 
+function getRepoConfigsPath(): string {
+  return path.join(app.getPath('userData'), 'repo-configs.json')
+}
+
+function loadAllRepoConfigs(): Record<string, RepoConfig> {
+  try {
+    const data = fs.readFileSync(getRepoConfigsPath(), 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    return {}
+  }
+}
+
+function saveAllRepoConfigs(configs: Record<string, RepoConfig>) {
+  fs.writeFileSync(getRepoConfigsPath(), JSON.stringify(configs, null, 2))
+}
+
+function copyFileRecursive(src: string, dst: string) {
+  const stat = fs.statSync(src)
+  if (stat.isDirectory()) {
+    if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true })
+    for (const entry of fs.readdirSync(src)) {
+      copyFileRecursive(path.join(src, entry), path.join(dst, entry))
+    }
+  } else {
+    const parent = path.dirname(dst)
+    if (!fs.existsSync(parent)) fs.mkdirSync(parent, { recursive: true })
+    fs.copyFileSync(src, dst)
+  }
+}
+
+ipcMain.handle('create-worktree', async (_event, repoPath: string, branchName: string, baseBranch?: string) => {
+  const parentDir = path.dirname(repoPath)
+  const repoName = path.basename(repoPath)
+  const safeBranch = branchName.replace(/\//g, '-')
+  const worktreePath = path.join(parentDir, `${repoName}-${safeBranch}`)
+  const steps: { step: string; ok: boolean; output?: string; error?: string }[] = []
+
+  // 1. git worktree add
+  try {
     if (baseBranch) {
       execSync(`git worktree add "${worktreePath}" -b "${branchName}" "${baseBranch}"`, {
-        cwd: repoPath,
-        encoding: 'utf-8',
+        cwd: repoPath, encoding: 'utf-8',
       })
     } else {
       execSync(`git worktree add "${worktreePath}" "${branchName}"`, {
-        cwd: repoPath,
-        encoding: 'utf-8',
+        cwd: repoPath, encoding: 'utf-8',
       })
     }
-    return { success: true, path: worktreePath }
+    steps.push({ step: 'git worktree add', ok: true })
   } catch (e: any) {
-    return { success: false, error: e.message }
+    return { success: false, error: e.message, steps }
+  }
+
+  // 2. Copy configured files
+  const configs = loadAllRepoConfigs()
+  const config = configs[repoPath] || { copyFiles: [], postCreateCommands: [] }
+
+  for (const relPath of config.copyFiles) {
+    const src = path.join(repoPath, relPath)
+    const dst = path.join(worktreePath, relPath)
+    try {
+      if (!fs.existsSync(src)) {
+        steps.push({ step: `copy ${relPath}`, ok: false, error: 'source not found' })
+        continue
+      }
+      copyFileRecursive(src, dst)
+      steps.push({ step: `copy ${relPath}`, ok: true })
+    } catch (e: any) {
+      steps.push({ step: `copy ${relPath}`, ok: false, error: e.message })
+    }
+  }
+
+  // 3. Run post-create commands
+  for (const cmd of config.postCreateCommands) {
+    try {
+      const out = execSync(cmd, {
+        cwd: worktreePath,
+        encoding: 'utf-8',
+        shell: '/bin/bash',
+        maxBuffer: 10 * 1024 * 1024,
+        timeout: 10 * 60 * 1000,
+        env: { ...process.env },
+      })
+      steps.push({ step: cmd, ok: true, output: out.slice(-500) })
+    } catch (e: any) {
+      steps.push({ step: cmd, ok: false, error: (e.stderr || e.message || '').toString().slice(-500) })
+    }
+  }
+
+  return { success: true, path: worktreePath, steps }
+})
+
+ipcMain.handle('get-repo-config', async (_event, repoPath: string) => {
+  const configs = loadAllRepoConfigs()
+  return configs[repoPath] || { copyFiles: [], postCreateCommands: [] }
+})
+
+ipcMain.handle('save-repo-config', async (_event, repoPath: string, config: RepoConfig) => {
+  const configs = loadAllRepoConfigs()
+  configs[repoPath] = config
+  saveAllRepoConfigs(configs)
+})
+
+ipcMain.handle('pick-file-from-repo', async (_event, repoPath: string) => {
+  const { dialog } = await import('electron')
+  const result = await dialog.showOpenDialog(mainWindow!, {
+    defaultPath: repoPath,
+    properties: ['openFile', 'showHiddenFiles'],
+  })
+  if (result.canceled) return null
+  const picked = result.filePaths[0]
+  // Return relative path if inside repo, else absolute
+  const rel = path.relative(repoPath, picked)
+  if (rel.startsWith('..')) return picked
+  return rel
+})
+
+ipcMain.handle('list-repo-files', async (_event, repoPath: string, pattern?: string) => {
+  try {
+    // Use git ls-files plus untracked (excludes ignored)
+    const tracked = execSync('git ls-files', { cwd: repoPath, encoding: 'utf-8' })
+    let files = tracked.trim().split('\n').filter(Boolean)
+    // Also include common dotfiles that are gitignored but might be needed
+    const extras = ['.env', '.env.local', '.env.development', '.env.production']
+    for (const e of extras) {
+      if (fs.existsSync(path.join(repoPath, e)) && !files.includes(e)) files.push(e)
+    }
+    if (pattern) {
+      const lower = pattern.toLowerCase()
+      files = files.filter((f) => f.toLowerCase().includes(lower))
+    }
+    return files.slice(0, 200)
+  } catch {
+    return []
   }
 })
 
