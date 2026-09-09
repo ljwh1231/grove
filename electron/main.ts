@@ -369,14 +369,47 @@ ipcMain.handle('list-repo-files', async (_event, repoPath: string, pattern?: str
 })
 
 ipcMain.handle('remove-worktree', async (_event, repoPath: string, worktreePath: string) => {
-  try {
-    execSync(`git worktree remove "${worktreePath}"`, {
+  const { dialog } = await import('electron')
+  const gitError = (e: any): string =>
+    (e?.stderr?.toString?.() || e?.message || String(e)).trim()
+
+  const run = (force: boolean) =>
+    execSync(`git worktree remove ${force ? '--force ' : ''}"${worktreePath}"`, {
       cwd: repoPath,
       encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'pipe'],
     })
+
+  try {
+    run(false)
     return { success: true }
   } catch (e: any) {
-    return { success: false, error: e.message }
+    const error = gitError(e)
+    const isDirty = /contains modified or untracked files|use --force/i.test(error)
+
+    if (isDirty) {
+      const { response } = await dialog.showMessageBox(mainWindow!, {
+        type: 'warning',
+        buttons: ['Cancel', 'Force Remove'],
+        defaultId: 0,
+        cancelId: 0,
+        title: 'Worktree has uncommitted changes',
+        message: 'This worktree contains modified or untracked files.',
+        detail: `${worktreePath}\n\nForce removing will permanently discard all uncommitted changes in this worktree.`,
+      })
+      if (response !== 1) return { success: false, cancelled: true }
+      try {
+        run(true)
+        return { success: true }
+      } catch (e2: any) {
+        const error2 = gitError(e2)
+        dialog.showErrorBox('Failed to remove worktree', error2)
+        return { success: false, error: error2 }
+      }
+    }
+
+    dialog.showErrorBox('Failed to remove worktree', error)
+    return { success: false, error }
   }
 })
 

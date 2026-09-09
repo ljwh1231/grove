@@ -49,7 +49,7 @@ export interface GroveAPI {
   openInIde: (ideCmd: string, worktreePath: string, appName?: string) => Promise<{ success: boolean; error?: string }>
   openTerminal: (worktreePath: string) => Promise<{ success: boolean; error?: string }>
   createWorktree: (repoPath: string, branchName: string, baseBranch?: string) => Promise<{ success: boolean; path?: string; error?: string }>
-  removeWorktree: (repoPath: string, worktreePath: string) => Promise<{ success: boolean; error?: string }>
+  removeWorktree: (repoPath: string, worktreePath: string) => Promise<{ success: boolean; cancelled?: boolean; error?: string }>
   getBranches: (repoPath: string) => Promise<string[]>
   selectDirectory: () => Promise<string | null>
   getSavedRepos: () => Promise<string[]>

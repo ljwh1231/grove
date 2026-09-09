@@ -110,6 +110,8 @@ function App() {
     const result = await api.removeWorktree(activeRepo, worktreePath)
     if (result.success) {
       loadWorktrees()
+    } else if (!result.cancelled) {
+      console.error('Failed to remove worktree:', result.error)
     }
   }
 
